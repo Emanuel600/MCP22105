@@ -40,25 +40,43 @@ add $t4, $t4, $t0  # res= res + a
 ######################################
 # res = ((b % 2) == 0)
 addi $t4, $0, 2
-div $t1, $t4	 # hi= b % 2
-mfhi $t4	 # res= hi
+div  $t1, $t4	   # hi= b % 2
+mfhi $t4	   # res= hi
 
-seq $t4, $t4, $0 # res= ((b%2)==0)
+ori  $t5, $0, 1    # set $t5 to 1
+sltu $t4, $t4, $t5 # se $t4 < $t5, $t4=0 -> res= ((b%2)==0)
 
 ######################################
 # res = (a < b) && (((a+b) % 3) == 10)
+add  $t4, $t0, $t1 # res= a+b
 
+addi $t5, $0, 3
+div  $t4, $t5      # hi= res % 3
+
+addi $t5, $0, 10
+mfhi $t4           # res= hi
+seq  $t4, $t4, $t5 # res= (res==10)
+
+slt  $t5, $t0, $t1 # a < b
+and  $t4, $t5, $t4 # res= (a<b) & res
 
 ######################################
 # res = (a >= b) && (c != d)
+sge  $t4, $t0, $t1 # res= (a >= b)
 
+sne  $t5, $t2, $t3 # c != d
+and  $t4, $t4, $t5 # res= (res & (c != d))
 
 ######################################
 # res = (((a/2)+1) > b) || (d == (b-a))
+sub  $t5, $t1, $t0 # b-a
+seq  $t5, $t3, $t5 # d == b-a
 
+sra  $t4, $t0, 1   # res= a/2
+addi $t4, $t4, 1   # res= (res + 1)
 
+sgt  $t4, $t4, $t1 # res= (res > b)
 
-
-
+or   $t4, $t4, $t5 # res= (res | (d == (b-a)))
 
 
