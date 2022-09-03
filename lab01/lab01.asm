@@ -12,30 +12,33 @@
 # a: $t0, b: $t1, c: $t2, d: $t3, res: $t4
 #########################################################
 
+# Estou assumindo que os valores de a, b, c e d não
+# podem ser modificados
+
 ######################################
 # res = a + b + c
-add $t4, $t0, $t1  # res= a + b
-add $t4, $t4, $t2  # res= res + c
+add  $t4, $t0, $t1   # res= a + b
+add  $t4, $t4, $t2   # res= res + c
 
 ######################################
 # res = a - b - c
-sub $t4, $t0, $t1  # res= a - b
-sub $t4, $t4, $t2  # res= res - c
+sub  $t4, $t0, $t1   # res= a - b
+sub  $t4, $t4, $t2   # res= res - c
 
 ######################################
 # res = a * b - c
-mul $t4, $t0, $t1  # res= a * b
-sub $t4, $t4, $t2  # res= res - c
+mul  $t4, $t0, $t1   # res= a * b
+sub  $t4, $t4, $t2   # res= res - c
 
 ######################################
 # res = a * (b + c)
-add $t4, $t1, $t2  # res= b + c
-mul $t4, $t0, $t4  # res= a * res
+add  $t4, $t1, $t2   # res= b + c
+mul  $t4, $t0, $t4   # res= a * res
 
 ######################################
 # res = a + (b - 5)
-addi $t4, $t1, -5  # res= b - 5
-add $t4, $t4, $t0  # res= res + a
+addi $t4, $t1, -5   # res= b - 5
+add  $t4, $t4, $t0  # res= res + a
 
 ######################################
 # res = ((b % 2) == 0)
@@ -43,8 +46,8 @@ addi $t4, $0, 2
 div  $t1, $t4	   # hi= b % 2
 mfhi $t4	   # res= hi
 
-ori  $t5, $0, 1    # set $t5 to 1
-sltu $t4, $t4, $t5 # se $t4 < $t5, $t4=0 -> res= ((b%2)==0)
+ori  $t5, $0, 1    
+sltu $t4, $t4, $t5 # se res < 1, res=0 -> res= ((b%2)==0)
 
 ######################################
 # res = (a < b) && (((a+b) % 3) == 10)
@@ -62,7 +65,8 @@ and  $t4, $t5, $t4 # res= (a<b) & res
 
 ######################################
 # res = (a >= b) && (c != d)
-sge  $t4, $t0, $t1 # res= (a >= b)
+slt  $t4, $t0, $t1 # res= (a < b)= !(a >= b) 
+xori $t4, $t4, 1   # res= !res
 
 sne  $t5, $t2, $t3 # c != d
 and  $t4, $t4, $t5 # res= (res & (c != d))
