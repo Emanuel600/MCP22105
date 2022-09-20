@@ -21,8 +21,10 @@
 # dest*	 = 0x4
 # n		 = *(0x8)
 #
-# for (i = 0 ; i < n ; i++){
+# while (n != 0){
 #   *(dest++) = *(fonte++)
+#   n--
+# }
 # ============================== #
 # Carrega posição inicial
 lui  $t0, 0x1001 # => Endereço fonte
@@ -30,10 +32,9 @@ lui  $t0, 0x1001 # => Endereço fonte
 lw   $t1, 4($t0) # => Endereço destino
 lw   $t2, 8($t0) # => Número de bytes a serem copiados
 lw   $t0, 0($t0) # => Endereço fonte
-# Loop
-move $t3, $0	 # => Inicializa 'i'
+
 F0:
-  bgt  $t3, $t2, exit # Se i>n, sai do loop
+  beq  $t2, $0, exit  # Se n=0, sai do loop
   
   lb   $t4, 0($t0)    # Carrega byte da fonte em t0
   sb   $t4, 0($t1)    # Armazena o byte no destino (endereçado por t1)
@@ -41,7 +42,7 @@ F0:
   addi $t0, $t0, 1    # *fonte++
   addi $t1, $t1, 1    # *dest++
   
-  addi $t3, $t3, 1    # i++
+  addi $t2, $t2, -1   # n--
   j    F0
 exit:
   ori  $v0, $0, 10

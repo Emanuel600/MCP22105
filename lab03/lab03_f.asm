@@ -22,8 +22,8 @@
 # n   = *(0x4)
 # num = *(0x8)
 #
-# for (i=0 ; i<n ; i++){
-#   rel = (ar[i] == num)
+# while (n != 0){
+#   rel = (ar[i] == num)  => i apenas serve para dizer que é iterativo
 #   if (rel){ break }
 # }
 #
@@ -33,17 +33,16 @@
 # Carrega endereço base de memória em t0
 lui  $t0, 0x1001
 # Carrega dados essenciais nos registradores
-lw   $t1, 0($t0) # => Endereço base do array (Também serve como 'i')
-lw   $t2, 4($t0) # => Número de elementos no array
+lw   $t1, 0($t0) # => Endereço base do array
+lw   $t2, 4($t0) # => Número de elementos no  (Substitui 'i')
 lw   $t3, 8($t0) # => Valor que queremos encontrar
 # Itera os elementos dentro do array
-ori  $t4, $0, 0  # => Inicializa 'i'
 F0:
   lw   $t5, 0($t1)   # Carrega elemento atual do array no t4
   seq  $t5, $t5, $t3
-  addi $t4, $t4, 1   # => i++
+  addi $t2, $t2, -1  # => n--
   bne  $t5, $0, exit
-  blt  $t4, $t2, exit
+  beq  $t2, $0, exit # => Sai do loop qundo n=0
   add  $t1, $t1, 4   # => ar[i] (*ptr++)
   j    F0
 exit:
