@@ -83,19 +83,19 @@ str1:       .asciiz "MCP22105 is cool"
 # size.
 #
 strResize:
-	jal strlen
+	add  $t8, $ra, $0      # Outro metodo chamado
+	add  $t7, $a0, $0      # strlen modifica a0
+	jal  strlen
 	bgt  $a1, $v0, error
-	add  $t0, $v0, $a0    # Posicao do ultimo caractere
-	loop:
-	sb   $0 , 0($t0)      # Armazena nulo no ultimo byte
-	addi $t0, $t0, -1     # Retorna um byte
-	addi $v0, $v0, -1     # len--
-	ble  $v0, $a1, return # v0=a1 significa que a string agora tem {size} caracteres
-	j loop
+	beq  $v0, $0 , error
 	
+	add  $a0, $t7, $a1
+	sb   $0 , 0($a0)
+	add  $v0, $a1, $0
 	error:
 	addi $v0, $0, -1
 	return:
+	add  $ra, $t8, $0
 	jr $ra
 #############################################
 
