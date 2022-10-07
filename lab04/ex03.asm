@@ -71,9 +71,18 @@ str1:       .asciiz "MCP22105 is cool"
 # deve retornar -1.
 #
 strSearch:
- 
- 
- 	jr $ra
+	add  $v0, $0 , $0      # int v0 = 0
+	loop:
+	lb   $t0, 0($a0)
+	beq  $t0, $0 , error   # Retorna erro ao encontrar byte nulo
+	beq  $t0, $a1, return  # Retorna indice do valor encontrado
+	addi $a0, $a0, 1       # Move para o proximo byte
+	addi $v0, $v0, 1       # v0++
+	j loop
+	error:
+	addi $v0, $0, -1
+	return:
+	jr $ra
 #############################################
 
 #############################################	
