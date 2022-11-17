@@ -4,7 +4,7 @@
 #
 # Aluno: Emanuel Staub Araldi
 #########################################################
-
+#
 #########################################################
 # Faça um programa que ordena um array, calcula o seu 
 # somatório, calcula a sua média aritmética. O programa 
@@ -34,7 +34,7 @@
 # funções (ex. imprime\_vetor(), exibe\_menu(), etc ...)
 #########################################################
 
-.include "macros.inc"
+.include "../inc/macros.inc"
 
 .data
 menu: .ascii "1- Inicializar um array de valores aleatórios\n"
@@ -116,7 +116,13 @@ main:
 		jal  sum_vec
 		j    swmenu
 	it6:
-		
+		lw   $a0, 08($sp)
+		lw   $a1, 12($sp)
+		jal  avg_vec
+		print_str("Média: ")
+		print_float($f0)
+		print_str("\n")
+		j    swmenu
 	it7:
 		print_str("Terminando programa\n")
 		lw   $ra, 4($sp)
@@ -221,5 +227,24 @@ sum_loop:
 	j    sum_loop
 sum_return:
 	jr   $ra
-	
+
+# float avg_vec(int* v, int size) {calcula média aritmética de um vetor}
+avg_vec:
+	addi $sp, $sp, -8
+	sw   $ra, 4($sp)
+	mtc1 $a1, $f1
+	cvt.s.w $f1, $f1
+	# a0 já possui int* v e a1 int size
+	jal  sum_vec
+	# Restora valor e destrói pilha
+	lw   $ra, 4($sp)
+	addi $sp, $sp, 8
+	# Armazena valores no formato double
+	mtc1 $v0, $f0 # sum(&v)
+	cvt.s.w $f0, $f0
+	# Calcula média
+	div.s $f0, $f0, $f1
+return_avg_vec:
+	jr   $ra
+
 # void copy_vec(int* v, int adr*, int size) {Copia vetor para um endereço}
